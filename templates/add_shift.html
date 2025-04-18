@@ -1,0 +1,35 @@
+<h2>{{ date }} のシフト登録</h2>
+<form method="post">
+  開始時間<br>
+  <select name="from_hour" required>
+    {% for h in range(0, 24) %}
+      <option value="{{ '%02d' % h }}">{{ '%02d' % h }}</option>
+    {% endfor %}
+  </select> 時
+
+  <select name="from_minute" required>
+    {% for m in [0, 15, 30, 45] %}
+      <option value="{{ '%02d' % m }}">{{ '%02d' % m }}</option>
+    {% endfor %}
+  </select> 分
+  <br><br>
+
+  終了時間<br>
+  <select name="to_hour" required>
+    {% for h in range(0, 24) %}
+      <option value="{{ '%02d' % h }}">{{ '%02d' % h }}</option>
+    {% endfor %}
+  </select> 時
+
+  <select name="to_minute" required>
+    {% for m in [0, 15, 30, 45] %}
+      <option value="{{ '%02d' % m }}">{{ '%02d' % m }}</option>
+    {% endfor %}
+  </select> 分
+  <br><br>
+
+  <input type="submit" value="登録">
+</form>
+
+<br>
+<a href="/">← カレンダーに戻る</a>

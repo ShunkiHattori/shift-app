@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>カレンダー</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; height: 100px; vertical-align: top; padding: 6px; width: 14.2%; }
+    th { background-color: #eee; }
+    .holiday { background-color: #ffebee; }
+    .shift { background-color: #e0f7fa; margin-top: 5px; padding: 2px; font-size: 0.85em; border-radius: 4px; }
+  </style>
+</head>
+<body>
+<h2>{{ user.username }} さんのシフト表</h2>
+<h3>{{ year }}年 {{ month }}月</h3>
+
+<form method="get" action="{{ url_for('calendar_view_detail', year=prev_year, month=prev_month) }}">
+  <button type="submit">← 前の月</button>
+</form>
+
+<form method="get" action="{{ url_for('calendar_view_detail', year=next_year, month=next_month) }}">
+  <button type="submit">次の月 →</button>
+</form>
+
+
+
+<table>
+  <tr>
+    {% for day in ['日', '月', '火', '水', '木', '金', '土'] %}
+      <th>{{ day }}</th>
+    {% endfor %}
+  </tr>
+  {% for week in calendar %}
+  <tr>
+    {% for day in week %}
+      {% if day %}
+        <td class="{% if day.date in holidays %}holiday{% endif %}">
+          <strong>{{ day.day }}</strong>
+        {% for shift in day.shifts %}
+          <div class="shift">
+            <strong>{{ shift.user.username }}</strong>: {{ shift.from_time }}〜{{ shift.to_time }}<br>
+          
+            {% if shift.user_id == current_user.id or current_user.is_admin %}
+              <a href="{{ url_for('edit_shift', shift_id=shift.id) }}">編集</a>
+              <form action="{{ url_for('delete_shift', shift_id=shift.id) }}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('削除してもよいですか？');">削除</button>
+              </form>
+            {% endif %}
+          </div>
+            
+        {% endfor %}
+          <div style="margin-top: 5px;">
+            <a href="{{ url_for('add_shift', date=day.date) }}">＋シフト追加</a>
+          </div>
+        </td>
+      {% else %}
+        <td></td>
+      {% endif %}
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+
+<p><a href="/logout">ログアウト</a></p>
+</body>
+</html>

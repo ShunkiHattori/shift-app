@@ -1,0 +1,37 @@
+<h2>シフト編集（{{ date }}）</h2>
+<form method="post">
+  開始時間<br>
+  <select name="from_hour" required>
+    {% for h in range(0, 24) %}
+      <option value="{{ '%02d' % h }}" {% if shift.from_time[:2] == '%02d' % h %}selected{% endif %}>{{ '%02d' % h }}</option>
+    {% endfor %}
+  </select> 時
+
+  <select name="from_minute" required>
+    {% for m in [0, 15, 30, 45] %}
+      <option value="{{ '%02d' % m }}" {% if shift.from_time[-2:] == '%02d' % m %}selected{% endif %}>{{ '%02d' % m }}</option>
+    {% endfor %}
+  </select> 分
+
+  <br><br>
+
+  終了時間<br>
+  <select name="to_hour" required>
+    {% for h in range(0, 24) %}
+      <option value="{{ '%02d' % h }}" {% if shift.to_time[:2] == '%02d' % h %}selected{% endif %}>{{ '%02d' % h }}</option>
+    {% endfor %}
+  </select> 時
+
+  <select name="to_minute" required>
+    {% for m in [0, 15, 30, 45] %}
+      <option value="{{ '%02d' % m }}" {% if shift.to_time[-2:] == '%02d' % m %}selected{% endif %}>{{ '%02d' % m }}</option>
+    {% endfor %}
+  </select> 分
+
+  <br><br>
+
+  <input type="submit" value="更新">
+</form>
+
+<br>
+<a href="/">← カレンダーに戻る</a>
