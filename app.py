@@ -9,6 +9,7 @@ from calendar import monthrange
 from sqlalchemy import cast, Date
 from collections import defaultdict
 from datetime import time
+from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -35,7 +36,7 @@ def calendar_view():
 @app.route('/calendar/<int:year>/<int:month>')
 @login_required
 def calendar_view_detail(year, month):
-    cal = calendar.Calendar()
+    cal = calendar.Calendar(firstweekday=6)
     month_days = cal.itermonthdates(year, month)
 
     # 正しい月末日を取得
@@ -195,6 +196,55 @@ def delete_shift(shift_id):
     db.session.commit()
     flash("シフトを削除しました")
     return redirect(url_for('calendar_view', year=shift.date.year, month=shift.date.month))
+
+
+@app.route('/bulk_add_shift', methods=['GET', 'POST'])
+@login_required
+def bulk_add_shift():
+    if request.method == 'POST':
+        # 開始日と終了日を取得
+        start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d')
+        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
+        
+        # 時間の設定
+        from_hour = int(request.form['from_hour'])
+        from_minute = int(request.form['from_minute'])
+        to_hour = int(request.form['to_hour'])
+        to_minute = int(request.form['to_minute'])
+        
+        # 開始時間と終了時間を文字列として作成
+        from_time = f"{from_hour:02d}:{from_minute:02d}"
+        to_time = f"{to_hour:02d}:{to_minute:02d}"
+        
+        # チェックされた曜日を取得
+        selected_days = request.form.getlist('days[]')
+        selected_days = [int(day) for day in selected_days]  # 文字列のリストを整数に変換
+        
+        # 開始日から終了日まで繰り返し
+        current_date = start_date
+        while current_date <= end_date:
+            # 現在の曜日を取得
+            current_weekday = current_date.weekday()
+            
+            # 選択された曜日に一致する場合にシフトを登録
+            if current_weekday in selected_days:
+                new_shift = Shift(
+                    user_id=current_user.id,
+                    date=current_date.date(),
+                    from_time=from_time,
+                    to_time=to_time
+                )
+                db.session.add(new_shift)
+            
+            # 次の日に進む
+            current_date += timedelta(days=1)
+        
+        db.session.commit()
+        flash('シフトが一括登録されました')
+        return redirect(url_for('calendar_view'))
+
+    return render_template('bulk_add_shift.html')
+
 
 if __name__ == '__main__':
     with app.app_context():

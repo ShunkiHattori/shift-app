@@ -61,7 +61,7 @@
   </tr>
   {% endfor %}
 </table>
-
+<a href="{{ url_for('bulk_add_shift', year=year, month=month) }}">▶ シフトを一括登録する</a>
 <p><a href="/logout">ログアウト</a></p>
 </body>
 </html>

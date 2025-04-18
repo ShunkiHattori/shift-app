@@ -1,0 +1,42 @@
+<form method="post">
+  開始日:
+  <input type="date" name="start_date" required><br><br>
+
+  終了日:
+  <input type="date" name="end_date" required><br><br>
+
+  開始時間:
+  <select name="from_hour" required>
+      {% for h in range(0, 24) %}
+      <option value="{{ '%02d' % h }}">{{ '%02d' % h }}</option>
+      {% endfor %}
+  </select> 時
+  <select name="from_minute" required>
+      {% for m in [0, 15, 30, 45] %}
+      <option value="{{ '%02d' % m }}">{{ '%02d' % m }}</option>
+      {% endfor %}
+  </select> 分<br><br>
+
+  終了時間:
+  <select name="to_hour" required>
+      {% for h in range(0, 24) %}
+      <option value="{{ '%02d' % h }}">{{ '%02d' % h }}</option>
+      {% endfor %}
+  </select> 時
+  <select name="to_minute" required>
+      {% for m in [0, 15, 30, 45] %}
+      <option value="{{ '%02d' % m }}">{{ '%02d' % m }}</option>
+      {% endfor %}
+  </select> 分<br><br>
+
+  曜日を選択:<br>
+  <input type="checkbox" name="days[]" value="0"> 月曜日<br>
+  <input type="checkbox" name="days[]" value="1"> 火曜日<br>
+  <input type="checkbox" name="days[]" value="2"> 水曜日<br>
+  <input type="checkbox" name="days[]" value="3"> 木曜日<br>
+  <input type="checkbox" name="days[]" value="4"> 金曜日<br>
+  <input type="checkbox" name="days[]" value="5"> 土曜日<br>
+  <input type="checkbox" name="days[]" value="6"> 日曜日<br><br>
+
+  <input type="submit" value="シフトを一括登録">
+</form>
